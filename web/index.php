@@ -1,15 +1,12 @@
 <!DOCTYPE html>
-<html lang="hu">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FLIP GAME - Kezdés</title>
-
-    <link
-      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600;700&display=swap"
-      rel="stylesheet"
-    />
-
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet"/>
     <style>
       * {
         box-sizing: border-box;
@@ -18,16 +15,17 @@
       }
 
       body {
+        overflow: hidden;
         width: 100vw;
         height: 100vh;
-        overflow: hidden;
+        overflow-x: hidden;
         font-family: "Inter", sans-serif;
         color: #fff;
         background: #000;
       }
 
       .background {
-        position: absolute;
+        position: fixed;
         inset: 0;
         background: url("public/webpage123-5sy-1800w.png") center/cover no-repeat;
         filter: blur(15px) brightness(0.6);
@@ -47,7 +45,7 @@
       }
 
       .overlay {
-        position: absolute;
+        position:absolute ;
         inset: 0;
         background: radial-gradient(
           circle at center,
@@ -57,14 +55,13 @@
         z-index: 2;
       }
 
-
       .navbar {
         font-family: "Press Start 2P", cursive;
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
-        height: 90px;
+        height: 70px;
         background: rgba(60, 60, 60, 0.8);
         display: flex;
         align-items: center;
@@ -99,47 +96,93 @@
         text-shadow: 0 0 8px #7afcff;
       }
 
-      .main-box {
+      .levels-container {
         font-family: "Press Start 2P", cursive;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: rgba(90, 90, 90, 0.75);
-        border-radius: 15px;
-        padding: 50px 80px;
-        text-align: center;
-        color: white;
-        backdrop-filter: blur(12px);
+        position: relative;
         z-index: 3;
-        box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+        gap: 50px;
+        padding: 100px 100px 50px;
       }
 
-      .main-box p {
-        font-size: 14px;
-        margin-bottom: 35px;
-        line-height: 1.8;
+      .level-card {
+        background: rgba(90, 90, 90, 0.75);
+        border-radius: 10px;
+        padding: 25px 25px ;
+        position: relative;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
       }
 
-      .main-box button {
+      .level-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.7);
+      }
+
+      .level-card h4 {
+        font-size: 12px;
+        color: #ccc;
+        margin-bottom: 20px;
+      }
+
+      .level-card h3 {
+        font-size: 22px;
+        margin-bottom: 25px;
+        color: #fff;
         font-family: "Press Start 2P", cursive;
+        line-height: 1.4;
+      }
+
+      .level-card p {
+        font-size: 15px;
+        color: #bcbcbc;
+        margin-bottom: 15px;
+        line-height: 1.4;
+      }
+
+      .level-difficulty {
+        font-size: 12px;
+        font-weight: bold;
+        margin-bottom: 12px;
+      }
+
+      .easy {
+        color: #65ff65;
+      }
+      .medium {
+        color: #ffae42;
+      }
+      .hard {
+        color: #ff6363;
+      }
+
+      .level-button {
+        display: inline-block;
         background: linear-gradient(135deg, #7afcff, #4ef3c3);
         border: none;
         color: #ffffff;
-        font-size: 14px;
+        font-size: 13px;
         font-weight: bold;
-        padding: 14px 40px;
+        padding: 8px 18px;
         border-radius: 8px;
         cursor: pointer;
-        text-transform: uppercase;
         transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(122, 252, 255, 0.4);
+        box-shadow: 0 3px 10px rgba(122, 252, 255, 0.3);
+        text-decoration: none;
       }
 
-      .main-box button:hover {
+      .level-button:hover {
         transform: scale(1.05);
-        box-shadow: 0 6px 20px rgba(122, 252, 255, 0.6);
-        background: linear-gradient(135deg, #4ef3c3, #7afcff);
+        box-shadow: 0 5px 15px rgba(122, 252, 255, 0.5);
+      }
+
+      .star {
+        position: absolute;
+        top: 10px;
+        right: 12px;
+        color: #ffcc00;
+        font-size: 20px;
       }
 
       @media (max-width: 768px) {
@@ -154,38 +197,25 @@
           margin-top: 10px;
         }
 
-        .main-box {
-          width: 85%;
-          padding: 40px 30px;
+        .levels-container {
+          padding: 130px 30px 40px;
+          gap: 20px;
         }
       }
     </style>
-  </head>
-
-  <body>
+</head>
+<body>
     <div class="background"></div>
-
-    <img
-      src="public/nvtelen126-bg69-800w.png"
-      alt="character"
-      class="character"
-    />
-
+    <img src="public/nvtelen126-bg69-800w.png" alt="character" class="character" />
     <div class="overlay"></div>
-
     <div class="navbar">
       <div class="navbar-title">FLIP GAME</div>
       <div class="navbar-links">
-        <a href="kezdes.html" style="color: #7afcff">Kezdés</a>
+        <a href="kezdes.html">Kezdés</a>
         <a href="szintek.html">Szintek</a>
         <a href="beallitasok.html">Beállítások</a>
-        <a href="index.php">Bejelentkezés</a>
+        <a href="index.php" style="color: #7afcff">Bejelentkezés</a>
       </div>
     </div>
-
-    <div class="main-box">
-      <p>A játék indításához<br />nyomd meg a START gombot</p>
-      <button>START</button>
-    </div>
-  </body>
+</body>
 </html>
