@@ -212,8 +212,9 @@
       <div class="navbar-title">FLIP GAME</div>
       <div class="navbar-links">
         <a href="kezdes.html">Kezdés</a>
-        <a href="szintek.html" style="color: #7afcff">Szintek</a>
+        <a href="szintek.html">Szintek</a>
         <a href="beallitasok.html">Beállítások</a>
+        <a href="index.php" style="color: #7afcff">Bejelentkezés</a>
       </div>
     </div>
 </body>
