@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="hu">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FLIP GAME - Szintek</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      html,body { height: 100%; }
+      body {
+        width: 100vw;
+        height: 100vh;
+        font-family: "Inter", sans-serif;
+        color: #fff;
+        background: #000;
+      }
+
+      .background {
+        position: fixed;
+        inset: 0;
+        background: url("public/webpage123-5sy-1800w.png") center/cover no-repeat;
+        filter: blur(15px) brightness(0.6);
+        transform: scale(1.05);
+        z-index: 0;
+      }
+
+      .character {
+        position: absolute;
+        bottom: 0;
+        right: 58%;
+        height: 60%;
+        opacity: 0.6;
+        filter: blur(6px) saturate(1.1);
+        z-index: 1;
+        pointer-events: none;
+      }
+
+      .overlay {
+        position:absolute ;
+        inset: 0;
+        background: radial-gradient(
+          circle at center,
+          rgba(0, 0, 0, 0.25),
+          rgba(0, 0, 0, 0.85)
+        );
+        z-index: 2;
+      }
+
+      .navbar {
+        font-family: "Press Start 2P", cursive;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 90px;
+        background: rgba(60, 60, 60, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 80px;
+        backdrop-filter: blur(10px);
+        border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        z-index: 5;
+      }
+
+      .navbar-title { font-size: 32px; letter-spacing: 4px; color: #7afcff; }
+      .navbar-links { display: flex; gap: 60px; }
+      .navbar-links a {
+        color: #e0e0e0;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 550;
+        transition: all 0.25s ease;
+      }
+      .navbar-links a:hover { color: #7afcff; text-shadow: 0 0 8px #7afcff; }
+
+      .levels-container {
+        font-family: "Press Start 2P", cursive;
+        position: relative;
+        z-index: 3;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 35px;
+        padding: 120px 60px 60px;
+        align-items: start;
+      }
+
+      .level-card {
+        background: rgba(90, 90, 90, 0.75);
+        border-radius: 10px;
+        padding: 22px;
+        position: relative;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.45s ease;
+        overflow: hidden;
+      }
+
+      .level-card:hover { transform: translateY(-5px); box-shadow: 0 6px 18px rgba(0,0,0,0.7); }
+
+      .level-card h4 { font-size: 12px; color: #ccc; margin-bottom: 14px; }
+      .level-card h3 {
+        font-size: 20px;
+        margin-bottom: 18px;
+        color: #fff;
+        font-family: "Press Start 2P", cursive;
+        line-height: 1.2;
+      }
+      .level-card p { font-size: 13px; color: #bcbcbc; margin-bottom: 12px; line-height: 1.4; }
+
+      .level-difficulty { font-size: 11px; font-weight: bold; margin-bottom: 12px; }
+      .easy { color: #65ff65; }
+      .medium { color: #ffae42; }
+      .hard { color: #ff6363; }
+
+      .level-button {
+        font-family: "Press Start 2P", cursive;
+        display: inline-block;
+        background: linear-gradient(135deg, #7afcff, #4ef3c3);
+        border: none;
+        color: #ffffff;
+        font-size: 13px;
+        font-weight: bold;
+        padding: 8px 18px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 3px 10px rgba(122, 252, 255, 0.3);
+      }
+      .level-button:hover { transform: scale(1.03); box-shadow: 0 5px 15px rgba(122,252,255,0.5); }
+      .level-button:active { transform: scale(0.99); }
+
+      .level-button[disabled] {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+
+      .star { position: absolute; top: 10px; right: 12px; color: #ffcc00; font-size: 20px; }
+
+      .locked {
+        filter: blur(6px) brightness(0.6);
+      }
+
+      .lock-overlay {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 12;
+        pointer-events: none;
+      }
+
+      .lock-icon {
+        background: rgba(0,0,0,0.45);
+        padding: 18px 22px;
+        border-radius: 999px;
+        font-size: 44px;
+        color: rgba(255,255,255,0.95);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.6), 0 0 30px rgba(0,0,0,0.2) inset;
+      }
+
+      .unlocking {
+        animation: unlockPulse 420ms ease forwards;
+      }
+      @keyframes unlockPulse {
+        0% { transform: scale(0.98); filter: blur(6px) brightness(0.6); }
+        60% { transform: scale(1.02); filter: blur(2px) brightness(0.9); }
+        100% { transform: scale(1); filter: none; }
+      }
+
+      @media (max-width: 768px) {
+        .navbar { flex-direction: column; height: auto; padding: 20px; }
+        .navbar-links { gap: 30px; margin-top: 10px; }
+        .levels-container { padding: 140px 20px 40px; gap: 20px; grid-template-columns: 1fr; }
+      }
+
+      @media (max-width:1024px){
+        .leves-container{
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .body
+        {
+          overflow: visible;
+        }
+      }
+      @media(max-width: 600px){
+        .levels-container{
+          grid-template-columns: 1fr;
+          padding: 140px 20px 40px;
+          gap: 20px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="background"></div>
+    <img src="public/nvtelen126-bg69-800w.png" alt="character" class="character" />
+    <div class="overlay"></div>
+
+    <div class="navbar">
+      <div class="navbar-title">FLIP GAME</div>
+      <div class="navbar-links">
+        <a href="kezdes.html">Kezdés</a>
+        <a href="szintek.html" style="color: #7afcff">Szintek</a>
+        <a href="beallitasok.html">Beállítások</a>
+        <a href="fejlesztes.html">Fejlesztés</a>
+        <a href="index.php">Bejelentkezés</a>
+      </div>
+    </div>
+
+    <main class="levels-container" aria-live="polite">
+      <section class="level-card" data-level="1" id="level-1">
+        <span class="star">★</span>
+        <h4>Level 1</h4>
+        <h3>Tutorial</h3>
+        <p>Tanuld meg a játék alapjait!</p>
+        <div class="level-difficulty easy">Easy</div>
+        <button class="level-button" type="button" data-level="1">Start</button>
+      </section>
+
+      <section class="level-card locked" data-level="2" id="level-2">
+        <div class="lock-overlay" aria-hidden="true">
+          <div class="lock-icon">🔒</div>
+        </div>
+        <span class="star">★</span>
+        <h4>Level 2</h4>
+        <h3>Valami2</h3>
+        <p>Valami szöveg sor</p>
+        <div class="level-difficulty easy">Easy</div>
+        <button class="level-button" type="button" data-level="2" disabled aria-disabled="true">Start</button>
+      </section>
+
+      <section class="level-card locked" data-level="3" id="level-3">
+        <div class="lock-overlay" aria-hidden="true">
+          <div class="lock-icon">🔒</div>
+        </div>
+        <span class="star">★</span>
+        <h4>Level 3</h4>
+        <h3>Valami3</h3>
+        <p>Valami szöveg sor írás valami3.</p>
+        <div class="level-difficulty easy">Easy</div>
+        <button class="level-button" type="button" data-level="3" disabled aria-disabled="true">Start</button>
+      </section>
+
+      <section class="level-card locked" data-level="4" id="level-4">
+        <div class="lock-overlay" aria-hidden="true">
+          <div class="lock-icon">🔒</div>
+        </div>
+        <span class="star">★</span>
+        <h4>Level 4</h4>
+        <h3>Valami4</h3>
+        <p>Valami szöveg sor írás valami4.</p>
+        <div class="level-difficulty medium">Medium</div>
+        <button class="level-button" type="button" data-level="4" disabled aria-disabled="true">Start</button>
+      </section>
+
+      <section class="level-card locked" data-level="5" id="level-5">
+        <div class="lock-overlay" aria-hidden="true">
+          <div class="lock-icon">🔒</div>
+        </div>
+        <span class="star">★</span>
+        <h4>Level 5</h4>
+        <h3>Valami5</h3>
+        <p>Valami szöveg sor írás valami5.</p>
+        <div class="level-difficulty medium">Medium</div>
+        <button class="level-button" type="button" data-level="5" disabled aria-disabled="true">Start</button>
+      </section>
+
+      <section class="level-card locked" data-level="6" id="level-6">
+        <div class="lock-overlay" aria-hidden="true">
+          <div class="lock-icon">🔒</div>
+        </div>
+        <span class="star">★</span>
+        <h4>Level 6</h4>
+        <h3>Valami6</h3>
+        <p>Valami szöveg sor írás valami6.</p>
+        <div class="level-difficulty medium">Medium</div>
+        <button class="level-button" type="button" data-level="6" disabled aria-disabled="true">Start</button>
+      </section>
+
+      <section class="level-card locked" data-level="7" id="level-7">
+        <div class="lock-overlay" aria-hidden="true">
+          <div class="lock-icon">🔒</div>
+        </div>
+        <span class="star">★</span>
+        <h4>Level 7</h4>
+        <h3>Valami7</h3>
+        <p>Valami szöveg sor írás valami7.</p>
+        <div class="level-difficulty hard">Hard</div>
+        <button class="level-button" type="button" data-level="7" disabled aria-disabled="true">Start</button>
+      </section>
+
+      <section class="level-card locked" data-level="8" id="level-8">
+        <div class="lock-overlay" aria-hidden="true">
+          <div class="lock-icon">🔒</div>
+        </div>
+        <span class="star">★</span>
+        <h4>Level 8</h4>
+        <h3>Valami8</h3>
+        <p>Valami szöveg sor írás valami8.</p>
+        <div class="level-difficulty hard">Hard</div>
+        <button class="level-button" type="button" data-level="8" disabled aria-disabled="true">Start</button>
+      </section>
+
+      <section class="level-card locked" data-level="9" id="level-9">
+        <div class="lock-overlay" aria-hidden="true">
+          <div class="lock-icon">🔒</div>
+        </div>
+        <span class="star">★</span>
+        <h4>Level 9</h4>
+        <h3>Valami9</h3>
+        <p>Valami szöveg sor írás valami9.</p>
+        <div class="level-difficulty hard">Hard</div>
+        <button class="level-button" type="button" data-level="9" disabled aria-disabled="true">Start</button>
+      </section>
+    </main>
+
+    <script>
+      (function () {
+  
+        const startButtons = document.querySelectorAll(".level-button");
+
+      
+        function getNextCard(currentLevel) {
+          const nextLevel = currentLevel + 1;
+          return document.querySelector('.level-card[data-level="' + nextLevel + '"]');
+        }
+
+ 
+        startButtons.forEach((btn) => {
+          btn.addEventListener("click", function (e) {
+            const lvl = Number(btn.getAttribute("data-level"));
+           
+            if (btn.disabled) return;
+
+            console.log("Indítva: Level " + lvl);
+
+           
+            const nextCard = getNextCard(lvl);
+            if (nextCard) {
+      
+              if (nextCard.classList.contains("locked")) {
+              
+                nextCard.classList.add("unlocking");
+       
+                const nextBtn = nextCard.querySelector(".level-button");
+                if (nextBtn) {
+                  nextBtn.disabled = false;
+                  nextBtn.removeAttribute("aria-disabled");
+                }
+
+  
+                setTimeout(() => {
+                  nextCard.classList.remove("locked", "unlocking");
+
+                  const overlay = nextCard.querySelector(".lock-overlay");
+                  if (overlay) overlay.remove();
+                }, 420);
+              }
+            }
+          });
+        });
+
+      })();
+    </script>
+  </body>
+</html>

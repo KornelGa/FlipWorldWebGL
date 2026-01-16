@@ -1,6 +1,6 @@
 <?php
 session_start();
-require 'php/config.php';
+require 'config.php';
 
 $logged_in = isset($_SESSION['user_id']);
 $user = null;
@@ -11,7 +11,7 @@ if ($logged_in) {
 }
 ?>
 <!DOCTYPE html>
-<html lang=hu">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -85,9 +85,8 @@ if ($logged_in) {
       }
 
       .navbar-title { font-size: 32px; letter-spacing: 4px; color: #7afcff; }
-      .navbar-links { display: flex; gap: 60px; }
+      .navbar-links { display: flex; gap: 80px; }
       .navbar-links a {
-        margin-top: 13px;
         color: #e0e0e0;
         text-decoration: none;
         font-size: 14px;
@@ -138,11 +137,6 @@ if ($logged_in) {
         display: flex;
         gap: 20px;
       }
-      .auth-buttons2 {
-        font-family: "Press Start 2P", cursive;
-        display: flex;
-        margin-top: 15px;
-      }
 
       .auth-btn {
         background: linear-gradient(135deg, #7afcff, #4ef3c3);
@@ -171,6 +165,11 @@ if ($logged_in) {
           padding: 20px;
         }
 
+        .navbar-links {
+          gap: 30px;
+          margin-top: 10px;
+        }
+
         .auth-buttons {
           flex-direction: column;
           gap: 10px;
@@ -190,14 +189,14 @@ if ($logged_in) {
     <div class="navbar">
       <div class="navbar-title">FLIP GAME</div>
       <div class="navbar-links">
-        <a href="kezdes.php">Kezdés</a>
+        <a href="kezdes.html">Kezdés</a>123312123
         <a href="./php/ujszintek.php">Szintek</a>
-        <a href="beallitasok.php">Beállítások</a>
-        <a href="fejlesztes.html">Fejlesztés</a>
-        <?php if ($logged_in): ?>
+        <a href="beallitasok.html">Beállítások</a>
+        <?php if ($loggea_in): ?>
           <div class="user-info">
             <img src="<?php echo htmlspecialchars($user['profile_pic']); ?>" alt="Avatar" class="user-avatar">
-            <a href="index.php"><?php echo htmlspecialchars($user['username']); ?></a>
+            <span><?php echo htmlspecialchars($user['username']); ?></span>
+            <a href="php/logout.php" class="auth-btn" style="padding: 6px 12px; font-size: 12px;">Kijelentkezés</a>
           </div>
         <?php else: ?>
           <a href="index.php" style="color: #7afcff">Bejelentkezés</a>
@@ -208,7 +207,7 @@ if ($logged_in) {
     <div class="content">
       <h1 class="welcome-message">Welcome to FLIP GAME</h1>
       <div class="auth-buttons">
-        <a href="php/login.php" class="auth-btn">Bejelentkezés</a>  
+        <a href="php/login.php" class="auth-btn">Bejelentkezés</a>
         <a href="php/register.php" class="auth-btn">Regisztráció</a>
       </div>
     </div>
@@ -216,11 +215,8 @@ if ($logged_in) {
     <div class="content">
       <h1 class="welcome-message">Üdv, <?php echo htmlspecialchars($user['username']); ?>!</h1>
       <div class="auth-buttons">
-        <a href="kezdes.php" class="auth-btn">Játék</a>
-        <a href="./php/ujszintek.php" class="auth-btn">Szintek</a>
-      </div>
-      <div class="auth-buttons2">
-        <a href="php/logout.php" class="auth-btn">Kijelentkezés</a>
+        <a href="kezdes.html" class="auth-btn">Játék</a>
+        <a href="szintek.html" class="auth-btn">Szintek</a>
       </div>
     </div>
     <?php endif; ?>
