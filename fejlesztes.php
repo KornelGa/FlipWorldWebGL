@@ -1,3 +1,15 @@
+<?php
+session_start();
+require 'php/config.php';
+
+$logged_in = isset($_SESSION['user_id']);
+$user = null;
+if ($logged_in) {
+    $stmt = $pdo->prepare("SELECT username, profile_pic FROM users WHERE id = ?");
+    $stmt->execute([$_SESSION['user_id']]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+}
+?>
 <!DOCTYPE html>
 <html lang="hu">
   <head>
@@ -84,6 +96,19 @@
         transition: all 0.25s ease;
       }
       .navbar-links a:hover { color: #7afcff; text-shadow: 0 0 8px #7afcff; }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 2px solid #7afcff;
+      }
 
       .gallery {
         position: relative;
@@ -306,11 +331,18 @@
     <div class="navbar">
       <div class="navbar-title">FLIP GAME</div>
       <div class="navbar-links">
-        <a href="kezdes.html">Kezdés</a>
+        <a href="kezdes.php">Kezdés</a>
         <a href="./php/ujszintek.php">Szintek</a>
-        <a href="beallitasok.html">Beállítások</a>
+        <a href="beallitasok.php">Beállítások</a>
         <a href="fejlesztes.php" style="color: #7afcff">Fejlesztés</a>
-        <a href="index.php">Bejelentkezés</a>
+        <?php if ($logged_in): ?>
+          <div class="user-info">
+            <img src="<?php echo htmlspecialchars($user['profile_pic']); ?>" alt="Avatar" class="user-avatar">
+            <a href="index.php"><?php echo htmlspecialchars($user['username']); ?></a>
+          </div>
+        <?php else: ?>
+          <a href="index.php" style="color: #7afcff">Bejelentkezés</a>
+        <?php endif; ?>
       </div>
     </div>
 

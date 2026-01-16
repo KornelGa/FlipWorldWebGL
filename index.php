@@ -193,7 +193,7 @@ if ($logged_in) {
         <a href="kezdes.php">Kezdés</a>
         <a href="./php/ujszintek.php">Szintek</a>
         <a href="beallitasok.php">Beállítások</a>
-        <a href="fejlesztes.html">Fejlesztés</a>
+        <a href="fejlesztes.php">Fejlesztés</a>
         <?php if ($logged_in): ?>
           <div class="user-info">
             <img src="<?php echo htmlspecialchars($user['profile_pic']); ?>" alt="Avatar" class="user-avatar">
